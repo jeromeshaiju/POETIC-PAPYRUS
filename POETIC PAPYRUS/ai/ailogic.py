@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
-import fitz  # PyMuPDF for PDFs
+import fitz  
 
 load_dotenv()
 
@@ -12,9 +12,8 @@ genai.configure(api_key=api_key)
 def extract_text_from_pdf(pdf_path):
     try:
 
-        # Open the PDF file
+        # Open the PDF file and Extract
         document = fitz.open(pdf_path)
-        # Extract text from each page
         text = ""
         for page_num in range(len(document)):
             page = document.load_page(page_num)
@@ -36,19 +35,17 @@ def process_input_with_pdf(pdf_file_path):
             "top_p": 1,
             "top_k": 0,
             "max_output_tokens": 2048,
-            "response_mime_type": "text/plain",
         }
         
         model = genai.GenerativeModel(
             model_name="gemini-1.0-pro",
             generation_config=generation_config,
         )
-    #prompt creation part
+    #prompt 
 
         additional_phrases = ", make it into a poem for kids include everything"
         message_to_send = pdf_text + "\n\n" + additional_phrases
         
-    # Starting a chat session
         chat_session = model.start_chat(history=[])
         response = chat_session.send_message(message_to_send)
         
